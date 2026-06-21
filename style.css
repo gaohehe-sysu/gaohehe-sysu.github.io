@@ -189,7 +189,7 @@ strong {
     display: grid;
     place-items: center;
     overflow: hidden;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.72)), url('assets/hero-bg.jpg') center/cover no-repeat;
+    background: linear-gradient(90deg, rgba(248, 252, 250, 0.4), rgba(248, 252, 250, 0.3)), url('主页背景.JPG') center/cover no-repeat;
 }
 
 .hero::after {
