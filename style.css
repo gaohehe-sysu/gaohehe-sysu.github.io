@@ -149,6 +149,36 @@ strong {
     background: var(--bg-muted);
 }
 
+.language-switcher {
+    display: flex;
+    align-items: center;
+    margin-left: 6px;
+    list-style: none;
+}
+
+.language-toggle {
+    min-height: 34px;
+    padding: 0 11px;
+    border: 1px solid rgba(24, 63, 78, 0.28);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--primary-color);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.language-toggle:hover,
+.language-toggle:focus-visible {
+    border-color: var(--accent-color);
+    background: rgba(179, 86, 66, 0.08);
+    color: var(--accent-color);
+    outline: none;
+}
+
 .nav-toggle {
     display: none;
     width: 42px;
@@ -798,6 +828,17 @@ html.js-enabled .reveal.visible {
         min-height: 44px;
         justify-content: center;
         font-size: 16px;
+    }
+
+    .language-switcher {
+        margin: 4px 0 0;
+        justify-content: center;
+    }
+
+    .language-toggle {
+        min-height: 40px;
+        min-width: 108px;
+        font-size: 15px;
     }
 
     .hero {
