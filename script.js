@@ -5,7 +5,7 @@ const navToggle = document.querySelector('.nav-toggle');
 const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
 const sections = document.querySelectorAll('header[id], main section[id]');
 const languageToggle = document.querySelector('.language-toggle');
-const initialLanguage = new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'zh';
+const initialLanguage = 'zh';
 let activeLanguage = 'zh';
 
 function setNavState() {
@@ -289,7 +289,7 @@ function updateLocalizedAttributes(language) {
     setNavToggleLabel(document.body.classList.contains('nav-open'));
 }
 
-function setLanguage(language, updateHistory = true) {
+function setLanguage(language) {
     const nextLanguage = language === 'en' ? 'en' : 'zh';
     if (nextLanguage !== activeLanguage) {
         translateTextNodes(nextLanguage);
@@ -297,15 +297,6 @@ function setLanguage(language, updateHistory = true) {
     }
 
     updateLocalizedAttributes(nextLanguage);
-
-    if (!updateHistory) return;
-    const url = new URL(window.location.href);
-    if (nextLanguage === 'en') {
-        url.searchParams.set('lang', 'en');
-    } else {
-        url.searchParams.delete('lang');
-    }
-    window.history.pushState({}, '', url);
 }
 
 languageToggle?.addEventListener('click', () => {
@@ -313,9 +304,11 @@ languageToggle?.addEventListener('click', () => {
     closeNav();
 });
 
-window.addEventListener('popstate', () => {
-    setLanguage(new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'zh', false);
-});
+const currentUrl = new URL(window.location.href);
+if (currentUrl.searchParams.has('lang')) {
+    currentUrl.searchParams.delete('lang');
+    window.history.replaceState({}, '', currentUrl);
+}
 
 setNavState();
-setLanguage(initialLanguage, false);
+setLanguage(initialLanguage);
