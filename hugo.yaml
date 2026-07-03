@@ -1,0 +1,18 @@
+baseURL: "https://gaohehe-sysu.github.io/"
+locale: "zh-CN"
+title: "高涵 - 经济学研究者"
+enableRobotsTXT: true
+disableKinds:
+  - taxonomy
+  - term
+
+params:
+  author: "高涵"
+  description: "高涵，中山大学岭南学院科研博士后，研究方向包括公共经济学、城市经济学、土地财政、土地配置与数字方法。"
+  ogDescription: "公共经济学、城市经济学、土地财政与数字方法。"
+  ogImage: "主页背景.JPG"
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
