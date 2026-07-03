@@ -494,14 +494,17 @@ strong {
 
 .life-gallery {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(240px, 320px);
-    gap: 18px;
+    grid-auto-flow: column dense;
+    grid-template-rows: repeat(2, 246px);
+    grid-auto-columns: clamp(228px, 23vw, 318px);
+    grid-auto-rows: 246px;
+    align-items: stretch;
+    gap: 16px;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: max(20px, calc((100vw - 1120px) / 2));
-    padding: 4px 4px 18px;
+    padding: 6px 4px 22px;
 }
 
 .life-gallery::-webkit-scrollbar {
@@ -520,23 +523,41 @@ strong {
 
 .life-photo {
     scroll-snap-align: start;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 0;
     overflow: hidden;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.96);
     box-shadow: var(--shadow-subtle);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.life-photo:nth-child(6n+1),
+.life-photo:nth-child(6n+5) {
+    grid-row: span 2;
+}
+
+.life-photo:hover {
+    transform: translateY(-4px);
+    border-color: rgba(179, 86, 66, 0.28);
+    box-shadow: var(--shadow);
 }
 
 .life-photo img {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 100%;
+    min-height: 0;
     object-fit: cover;
-    background: var(--bg-muted);
+    background: var(--bg-soft);
 }
 
 .life-photo figcaption {
-    min-height: 48px;
-    padding: 12px 14px;
+    min-height: 46px;
+    padding: 11px 14px;
+    border-top: 1px solid rgba(220, 229, 226, 0.72);
+    background: rgba(255, 255, 255, 0.92);
     color: var(--text-gray);
     font-size: 14px;
     line-height: 1.45;
@@ -956,7 +977,19 @@ html.js-enabled .reveal.visible {
     }
 
     .life-gallery {
+        grid-template-rows: none;
         grid-auto-columns: minmax(220px, 78vw);
+        grid-auto-rows: auto;
+    }
+
+    .life-photo:nth-child(6n+1),
+    .life-photo:nth-child(6n+5) {
+        grid-row: auto;
+    }
+
+    .life-photo img {
+        height: auto;
+        aspect-ratio: 4 / 3;
     }
 
     .pub-item {
