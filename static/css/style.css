@@ -539,6 +539,14 @@ strong {
     grid-row: span 2;
 }
 
+.life-photo:nth-last-child(-n+6) {
+    grid-row: auto;
+}
+
+.life-photo:last-child {
+    grid-row: span 2;
+}
+
 .life-photo:hover {
     transform: translateY(-4px);
     border-color: rgba(179, 86, 66, 0.28);

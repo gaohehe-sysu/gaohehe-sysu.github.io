@@ -147,9 +147,21 @@
                     <p>一些旅行、演出、校园与家乡的片段。</p>
                 </div>
                 <div class="life-gallery" aria-label="个人生活照片">
-                    {{ range sort (readDir "static/个人生活") "Name" }}
+                    {{ $lifeFiles := sort (readDir "static/个人生活") "Name" }}
+                    {{ $featuredPhoto := "毕业答辩with导师.JPG" }}
+                    {{ range $lifeFiles }}
                         {{ $ext := lower (path.Ext .Name) }}
-                        {{ if in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext }}
+                        {{ if and (eq .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
+                            {{ $imagePath := printf "个人生活/%s" .Name }}
+                            <figure class="life-photo reveal">
+                                <img src="{{ $imagePath | relURL }}" alt="{{ .Name }}" loading="lazy" decoding="async">
+                                <figcaption>{{ .Name }}</figcaption>
+                            </figure>
+                        {{ end }}
+                    {{ end }}
+                    {{ range $lifeFiles }}
+                        {{ $ext := lower (path.Ext .Name) }}
+                        {{ if and (ne .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
                             {{ $imagePath := printf "个人生活/%s" .Name }}
                             <figure class="life-photo reveal">
                                 <img src="{{ $imagePath | relURL }}" alt="{{ .Name }}" loading="lazy" decoding="async">
