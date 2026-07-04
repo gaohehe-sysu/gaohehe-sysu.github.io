@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ .Permalink }}">
     <title>{{ .Site.Title }}</title>
     <link rel="preload" href="{{ "主页背景.JPG" | relURL }}" as="image">
-    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}?v=20260704-ai2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&amp;family=Source+Sans+3:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -115,23 +115,28 @@
                             <li>数字方法：地块文本、政策文本与 AI/LLM 研究方法</li>
                         </ul>
                     </div>
-                    <aside class="profile-card" aria-label="教育背景">
-                        <h3>教育背景</h3>
-                        <div class="edu-item">
-                            <span class="year">2022 - 2026</span>
-                            <span class="degree">经济学博士</span>
-                            <span class="school">中山大学国际金融学院 · 应用经济学</span>
+                    <aside class="about-side" aria-label="教育背景与画像">
+                        <div class="profile-card">
+                            <h3>教育背景</h3>
+                            <div class="edu-item">
+                                <span class="year">2022 - 2026</span>
+                                <span class="degree">经济学博士</span>
+                                <span class="school">中山大学国际金融学院 · 应用经济学</span>
+                            </div>
+                            <div class="edu-item">
+                                <span class="year">2020 - 2022</span>
+                                <span class="degree">国际商务硕士</span>
+                                <span class="school">广东外语外贸大学经贸学院 · 国际商务</span>
+                            </div>
+                            <div class="edu-item">
+                                <span class="year">2016 - 2020</span>
+                                <span class="degree">经济学与文学双学位</span>
+                                <span class="school">广东外语外贸大学创新班 · 英文学院与经贸学院联合项目</span>
+                            </div>
                         </div>
-                        <div class="edu-item">
-                            <span class="year">2020 - 2022</span>
-                            <span class="degree">国际商务硕士</span>
-                            <span class="school">广东外语外贸大学经贸学院 · 国际商务</span>
-                        </div>
-                        <div class="edu-item">
-                            <span class="year">2016 - 2020</span>
-                            <span class="degree">经济学与文学双学位</span>
-                            <span class="school">广东外语外贸大学创新班 · 英文学院与经贸学院联合项目</span>
-                        </div>
+                        <figure class="about-portrait">
+                            <img src="{{ "assets/ai-portrait.png" | relURL }}" alt="AI眼中的我" loading="lazy" decoding="async">
+                        </figure>
                     </aside>
                 </div>
             </div>
@@ -145,6 +150,7 @@
                 </div>
                 <div class="life-intro">
                     <p>一些旅行、演出、校园与家乡的片段。</p>
+                    <p>陈奕迅有一首歌叫《沙龙》，唱的是摄影与拍照的意义。我喜欢其中“每张都罕有”的意思：用照片记录生命的密度，坦白留下当时的感情、态度与转瞬即逝的片段。</p>
                 </div>
                 <div class="life-gallery" aria-label="个人生活照片">
                     {{ $lifeFiles := sort (readDir "static/个人生活") "Name" }}
