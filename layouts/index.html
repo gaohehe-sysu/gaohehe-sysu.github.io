@@ -153,9 +153,10 @@
                         {{ $ext := lower (path.Ext .Name) }}
                         {{ if and (eq .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
                             {{ $imagePath := printf "个人生活/%s" .Name }}
+                            {{ $caption := replaceRE "\\.[^.]+$" "" .Name }}
                             <figure class="life-photo reveal">
-                                <img src="{{ $imagePath | relURL }}" alt="{{ .Name }}" loading="lazy" decoding="async">
-                                <figcaption>{{ .Name }}</figcaption>
+                                <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
+                                <figcaption>{{ $caption }}</figcaption>
                             </figure>
                         {{ end }}
                     {{ end }}
@@ -163,9 +164,10 @@
                         {{ $ext := lower (path.Ext .Name) }}
                         {{ if and (ne .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
                             {{ $imagePath := printf "个人生活/%s" .Name }}
+                            {{ $caption := replaceRE "\\.[^.]+$" "" .Name }}
                             <figure class="life-photo reveal">
-                                <img src="{{ $imagePath | relURL }}" alt="{{ .Name }}" loading="lazy" decoding="async">
-                                <figcaption>{{ .Name }}</figcaption>
+                                <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
+                                <figcaption>{{ $caption }}</figcaption>
                             </figure>
                         {{ end }}
                     {{ end }}
