@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ .Permalink }}">
     <title>{{ .Site.Title }}</title>
     <link rel="preload" href="{{ "主页背景.JPG" | relURL }}" as="image">
-    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}?v=20260704-ai2">
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}?v=20260705-ai4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&amp;family=Source+Sans+3:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -135,7 +135,10 @@
                             </div>
                         </div>
                         <figure class="about-portrait">
-                            <img src="{{ "assets/ai-portrait.png" | relURL }}" alt="AI眼中的我" loading="lazy" decoding="async">
+                            <div class="about-portrait-image">
+                                <img src="{{ "assets/ai-portrait.png" | relURL }}" alt="AI眼中的我" loading="lazy" decoding="async">
+                            </div>
+                            <figcaption>AI眼中的我</figcaption>
                         </figure>
                     </aside>
                 </div>
@@ -150,7 +153,7 @@
                 </div>
                 <div class="life-intro">
                     <p>一些旅行、演出、校园与家乡的片段。</p>
-                    <p>陈奕迅有一首歌叫《沙龙》，唱的是摄影与拍照的意义。我喜欢其中“每张都罕有”的意思：用照片记录生命的密度，坦白留下当时的感情、态度与转瞬即逝的片段。</p>
+                    <p>陈奕迅有一首歌叫《沙龙》，唱的是摄影与拍照的意义。他在歌里唱到“每张都罕有”。我也喜欢用照片记录生命的密度，坦白留下当时的感情、态度与转瞬即逝的片段。</p>
                 </div>
                 <div class="life-gallery" aria-label="个人生活照片">
                     {{ $lifeFiles := sort (readDir "static/个人生活") "Name" }}

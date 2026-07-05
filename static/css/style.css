@@ -449,7 +449,8 @@ strong {
 }
 
 .about-portrait {
-    position: relative;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
     min-height: 0;
     margin: 0;
     overflow: hidden;
@@ -457,6 +458,12 @@ strong {
     border-radius: 8px;
     background: #fff;
     box-shadow: var(--shadow-subtle);
+}
+
+.about-portrait-image {
+    position: relative;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .about-portrait img {
@@ -467,6 +474,16 @@ strong {
     height: 100%;
     object-fit: cover;
     object-position: center 43%;
+}
+
+.about-portrait figcaption {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+    background: #fff;
 }
 
 .profile-card h3 {
@@ -922,11 +939,11 @@ html.js-enabled .reveal.visible {
     }
 
     .about-portrait {
-        aspect-ratio: 4 / 5;
+        aspect-ratio: auto;
     }
 
-    .about-portrait img {
-        height: 100%;
+    .about-portrait-image {
+        aspect-ratio: 4 / 5;
     }
 }
 
