@@ -14,7 +14,7 @@
     <link rel="canonical" href="{{ .Permalink }}">
     <title>{{ .Site.Title }}</title>
     <link rel="preload" href="{{ "主页背景.JPG" | relURL }}" as="image">
-    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}?v=20260705-ai4">
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}?v=20260705-life-layout">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&amp;family=Source+Sans+3:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -162,8 +162,18 @@
                         {{ $ext := lower (path.Ext .Name) }}
                         {{ if and (eq .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
                             {{ $imagePath := printf "个人生活/%s" .Name }}
+                            {{ $imageFile := printf "static/%s" $imagePath }}
+                            {{ $imageConfig := imageConfig $imageFile }}
+                            {{ $photoClass := "life-photo-square" }}
+                            {{ if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 175) }}
+                                {{ $photoClass = "life-photo-panorama" }}
+                            {{ else if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 118) }}
+                                {{ $photoClass = "life-photo-landscape" }}
+                            {{ else if gt (mul $imageConfig.Height 100) (mul $imageConfig.Width 118) }}
+                                {{ $photoClass = "life-photo-portrait" }}
+                            {{ end }}
                             {{ $caption := replaceRE "\\.[^.]+$" "" .Name }}
-                            <figure class="life-photo reveal">
+                            <figure class="life-photo life-photo-featured {{ $photoClass }} reveal">
                                 <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
                                 <figcaption>{{ $caption }}</figcaption>
                             </figure>
@@ -173,8 +183,18 @@
                         {{ $ext := lower (path.Ext .Name) }}
                         {{ if and (ne .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
                             {{ $imagePath := printf "个人生活/%s" .Name }}
+                            {{ $imageFile := printf "static/%s" $imagePath }}
+                            {{ $imageConfig := imageConfig $imageFile }}
+                            {{ $photoClass := "life-photo-square" }}
+                            {{ if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 175) }}
+                                {{ $photoClass = "life-photo-panorama" }}
+                            {{ else if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 118) }}
+                                {{ $photoClass = "life-photo-landscape" }}
+                            {{ else if gt (mul $imageConfig.Height 100) (mul $imageConfig.Width 118) }}
+                                {{ $photoClass = "life-photo-portrait" }}
+                            {{ end }}
                             {{ $caption := replaceRE "\\.[^.]+$" "" .Name }}
-                            <figure class="life-photo reveal">
+                            <figure class="life-photo {{ $photoClass }} reveal">
                                 <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
                                 <figcaption>{{ $caption }}</figcaption>
                             </figure>
@@ -533,6 +553,6 @@
         </div>
     </footer>
 
-    <script src="{{ "js/script.js" | relURL }}"></script>
+    <script src="{{ "js/script.js" | relURL }}?v=20260705-life-layout"></script>
 </body>
 </html>

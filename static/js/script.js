@@ -77,6 +77,154 @@ window.addEventListener('resize', () => {
     if (window.innerWidth > 768) closeNav();
 });
 
+function updateLifePhotoOrientation() {
+    document.querySelectorAll('.life-photo img').forEach((image) => {
+        const applyOrientation = () => {
+            const photo = image.closest('.life-photo');
+            if (!photo || !image.naturalWidth || !image.naturalHeight) return;
+
+            const ratio = image.naturalWidth / image.naturalHeight;
+            photo.classList.remove(
+                'life-photo-panorama',
+                'life-photo-landscape',
+                'life-photo-portrait',
+                'life-photo-square'
+            );
+
+            if (ratio > 1.75) {
+                photo.classList.add('life-photo-panorama');
+            } else if (ratio > 1.18) {
+                photo.classList.add('life-photo-landscape');
+            } else if (ratio < 0.84) {
+                photo.classList.add('life-photo-portrait');
+            } else {
+                photo.classList.add('life-photo-square');
+            }
+        };
+
+        if (image.complete) {
+            applyOrientation();
+        } else {
+            image.addEventListener('load', applyOrientation, { once: true });
+        }
+    });
+}
+
+function initLifeGalleryAutoScroll() {
+    const gallery = document.querySelector('.life-gallery');
+    if (!gallery) return;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let isVisible = false;
+    let isHoverPaused = false;
+    let isDragPaused = false;
+    let isFocusPaused = false;
+    let direction = 1;
+    let lastTimestamp = 0;
+
+    const canScroll = () => gallery.scrollWidth > gallery.clientWidth + 4;
+    const isPointerOverGallery = () => isHoverPaused || gallery.matches(':hover');
+    const shouldAutoScroll = () => (
+        isVisible
+        && !document.hidden
+        && !isPointerOverGallery()
+        && !isDragPaused
+        && !isFocusPaused
+        && !reducedMotionQuery.matches
+        && canScroll()
+    );
+
+    const syncAutoScrollState = () => {
+        gallery.classList.toggle('is-auto-scrolling', shouldAutoScroll());
+    };
+
+    const animationStep = (timestamp) => {
+        if (!lastTimestamp) lastTimestamp = timestamp;
+        const elapsed = Math.min(timestamp - lastTimestamp, 80);
+        lastTimestamp = timestamp;
+
+        if (shouldAutoScroll()) {
+            const maxScroll = gallery.scrollWidth - gallery.clientWidth;
+            const nextScroll = gallery.scrollLeft + direction * elapsed * 0.032;
+
+            if (nextScroll >= maxScroll) {
+                gallery.scrollLeft = maxScroll;
+                direction = -1;
+            } else if (nextScroll <= 0) {
+                gallery.scrollLeft = 0;
+                direction = 1;
+            } else {
+                gallery.scrollLeft = nextScroll;
+            }
+        }
+
+        syncAutoScrollState();
+        window.requestAnimationFrame(animationStep);
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting;
+        lastTimestamp = 0;
+        syncAutoScrollState();
+    }, {
+        threshold: 0.14
+    });
+
+    observer.observe(gallery);
+
+    const pauseForHover = () => {
+        isHoverPaused = true;
+        syncAutoScrollState();
+    };
+
+    const resumeAfterHover = () => {
+        isHoverPaused = false;
+        syncAutoScrollState();
+    };
+
+    gallery.addEventListener('mouseenter', pauseForHover);
+    gallery.addEventListener('mouseleave', resumeAfterHover);
+    gallery.addEventListener('pointerenter', pauseForHover);
+    gallery.addEventListener('pointerleave', resumeAfterHover);
+
+    gallery.addEventListener('pointerdown', () => {
+        isDragPaused = true;
+        syncAutoScrollState();
+    });
+
+    window.addEventListener('pointerup', () => {
+        isDragPaused = false;
+        syncAutoScrollState();
+    });
+
+    gallery.addEventListener('focusin', () => {
+        isFocusPaused = true;
+        syncAutoScrollState();
+    });
+
+    gallery.addEventListener('focusout', () => {
+        isFocusPaused = false;
+        syncAutoScrollState();
+    });
+
+    window.addEventListener('resize', () => {
+        if (gallery.scrollLeft <= 1) direction = 1;
+        if (gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 1) direction = -1;
+        syncAutoScrollState();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        lastTimestamp = 0;
+        syncAutoScrollState();
+    });
+
+    reducedMotionQuery.addEventListener?.('change', syncAutoScrollState);
+    window.requestAnimationFrame(animationStep);
+}
+
+updateLifePhotoOrientation();
+initLifeGalleryAutoScroll();
+
 const englishText = new Map(Object.entries({
     "跳转到主要内容": "Skip to main content",
     "高涵": "Gao Han",

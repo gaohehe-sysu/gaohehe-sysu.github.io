@@ -544,18 +544,25 @@ strong {
 }
 
 .life-gallery {
+    --life-row-height: clamp(184px, 18vw, 246px);
+    --life-column-width: clamp(204px, 17vw, 278px);
     display: grid;
     grid-auto-flow: column dense;
-    grid-template-rows: repeat(2, 246px);
-    grid-auto-columns: clamp(228px, 23vw, 318px);
-    grid-auto-rows: 246px;
+    grid-template-rows: repeat(2, var(--life-row-height));
+    grid-auto-columns: var(--life-column-width);
+    grid-auto-rows: var(--life-row-height);
     align-items: stretch;
     gap: 16px;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
     scroll-padding-inline: max(20px, calc((100vw - 1120px) / 2));
     padding: 6px 4px 22px;
+    scrollbar-gutter: stable;
+}
+
+.life-gallery.is-auto-scrolling {
+    scroll-snap-type: none;
 }
 
 .life-gallery::-webkit-scrollbar {
@@ -585,16 +592,17 @@ strong {
     transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
-.life-photo:nth-child(6n+1),
-.life-photo:nth-child(6n+5) {
+.life-photo-featured {
+    grid-column: span 2;
     grid-row: span 2;
 }
 
-.life-photo:nth-last-child(-n+6) {
-    grid-row: auto;
+.life-photo-panorama,
+.life-photo-landscape {
+    grid-column: span 2;
 }
 
-.life-photo:last-child {
+.life-photo-portrait {
     grid-row: span 2;
 }
 
@@ -609,7 +617,14 @@ strong {
     height: 100%;
     min-height: 0;
     object-fit: cover;
+    object-position: center;
     background: var(--bg-soft);
+}
+
+.life-photo-featured img,
+.life-photo-landscape img,
+.life-photo-panorama img {
+    object-position: center 44%;
 }
 
 .life-photo figcaption {
@@ -1050,19 +1065,28 @@ html.js-enabled .reveal.visible {
     }
 
     .life-gallery {
-        grid-template-rows: none;
-        grid-auto-columns: minmax(220px, 78vw);
-        grid-auto-rows: auto;
+        --life-row-height: clamp(164px, 38vw, 196px);
+        --life-column-width: minmax(170px, 56vw);
+        grid-template-rows: repeat(2, var(--life-row-height));
+        grid-auto-rows: var(--life-row-height);
+        gap: 12px;
+        padding-bottom: 18px;
     }
 
-    .life-photo:nth-child(6n+1),
-    .life-photo:nth-child(6n+5) {
-        grid-row: auto;
+    .life-photo-landscape,
+    .life-photo-panorama {
+        grid-column: span 2;
     }
 
     .life-photo img {
-        height: auto;
-        aspect-ratio: 4 / 3;
+        height: 100%;
+        aspect-ratio: auto;
+    }
+
+    .life-photo figcaption {
+        min-height: 42px;
+        padding: 9px 11px;
+        font-size: 13px;
     }
 
     .pub-item {
