@@ -102,12 +102,11 @@
                 </div>
                 <div class="about-content">
                     <div class="about-text">
-                        <p>我现在是中山大学岭南学院科研博士后，研究方向为公共经济学与城市经济学。</p>
-                        <p>我本科就读于广东外语外贸大学创新班，这是由广外英文学院与经贸学院共同开设的双学位项目，并于 2020 年获得经济学与文学学位。2020-2022 年，我继续在广外经贸学院攻读硕士，于 2022 年获得国际商务硕士学位。2022-2026 年，我在中山大学国际金融学院攻读博士学位，研究兴趣包括财税改革与土地配置、城市经济中的产业集群等。</p>
-                        <p>总的来说，我的研究兴趣始终围绕中国城市中的土地、财政与空间结构展开。博士阶段，我以“地块”为切入点构建了一个相对完整的研究框架，这也是我的学位论文。未来，我希望把这一框架向公共服务、本地消费、地方政府行为、跨区域协调等更广的议题延伸。</p>
+                        <p>Welcome！我是高涵，2026年7月我入职中山大学岭南学院担任科研博士后，研究方向为公共经济学与城市经济学。我的学术论文与决策参考发表或待刊于《管理世界》《财经问题研究》《南方智库》等，我获得中山大学2026届优秀毕业生、2025年第五届发展经济学全国大学生论文比赛二等奖。</p>
+                        <p>我本科就读于广东外语外贸大学创新班，这是广外经贸学院与英文学院的双学位项目，我于2020年获得经济学学士和文学学士学位。本科毕业后，我继续在广外攻读硕士，导师是<a class="collaborator-link" href="https://jingmao.gdufs.edu.cn/info/1570/5158.htm" target="_blank" rel="noopener noreferrer">安苑</a>教授。2022-2026 年，我在中山大学国际金融学院攻读博士学位，导师是<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>教授，我于2026年6月获得经济学博士学位。我的研究兴趣包括财税改革与土地配置、城市空间结构与产业集群等。当前，我正在探索 AI-Agent 及其在经济学中的应用，并与自己以往的研究相结合。</p>
                         <p>更长远地看，我把自己的研究定位在“空间中的公共经济学”这个交汇点：把传统公共经济学关心的财政、再分配、公共品供给问题，放到空间维度下重新审视。</p>
                         <p>“大潮起珠江”。作为改革开放的前沿，珠三角这片土地有很多鲜活精彩、值得深入思考的现实经济问题。我希望在这里多观察、多调研，做出更多真正的研究。</p>
-                        <p>我来自湖北荆州，江河湖泊环绕的平原小镇。学习与工作之余，我喜欢逛展、拍照、打羽毛球、看电影和阅读，也会在小红书分享对学术科研的思考与感悟。</p>
+                        <p>我来自湖北荆州，江河湖泊环绕的平原小镇。学习与工作之余，我喜欢逛展、拍照、打羽毛球、看电影、阅读、看演唱会和音乐节，也喜欢弹吉他，还会在小红书分享对学术科研的思考与感悟。</p>
                         <ul class="interest-list">
                             <li>公共经济学：财税体制改革、地方政府行为与公共品供给</li>
                             <li>城市经济学：土地配置、产业集群、本地消费与空间结构</li>
@@ -131,7 +130,7 @@
                             <div class="edu-item">
                                 <span class="year">2016 - 2020</span>
                                 <span class="degree">经济学与文学双学位</span>
-                                <span class="school">广东外语外贸大学创新班 · 英文学院与经贸学院联合项目</span>
+                                <span class="school">广东外语外贸大学创新班</span>
                             </div>
                         </div>
                         <figure class="about-portrait">
@@ -155,51 +154,78 @@
                     <p>一些旅行、演出、校园与家乡的片段。</p>
                     <p>陈奕迅有一首歌叫《沙龙》，唱的是摄影与拍照的意义。他在歌里唱到“每张都罕有”。我也喜欢用照片记录生命的密度，坦白留下当时的感情、态度与转瞬即逝的片段。</p>
                 </div>
-                <div class="life-gallery" aria-label="个人生活照片">
-                    {{ $lifeFiles := sort (readDir "static/个人生活") "Name" }}
+                <div class="life-photo-layout">
+                    {{ $lifeImageExts := slice ".jpg" ".jpeg" ".png" ".webp" ".gif" }}
                     {{ $featuredPhoto := "毕业答辩with导师.JPG" }}
-                    {{ range $lifeFiles }}
-                        {{ $ext := lower (path.Ext .Name) }}
-                        {{ if and (eq .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
-                            {{ $imagePath := printf "个人生活/%s" .Name }}
-                            {{ $imageFile := printf "static/%s" $imagePath }}
-                            {{ $imageConfig := imageConfig $imageFile }}
-                            {{ $photoClass := "life-photo-square" }}
-                            {{ if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 175) }}
-                                {{ $photoClass = "life-photo-panorama" }}
-                            {{ else if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 118) }}
-                                {{ $photoClass = "life-photo-landscape" }}
-                            {{ else if gt (mul $imageConfig.Height 100) (mul $imageConfig.Width 118) }}
-                                {{ $photoClass = "life-photo-portrait" }}
+                    {{ $featuredPortraitPhoto := "博士学位论文答辩.JPG" }}
+                    {{ $landscapeFiles := hugo.Data.life_photos.landscape }}
+                    {{ $portraitFiles := hugo.Data.life_photos.portrait }}
+
+                    <div class="life-panel">
+                        <div class="life-gallery life-gallery-landscape" aria-label="个人生活横版照片">
+                            {{ range $landscapeFiles }}
+                                {{ $ext := lower (path.Ext .) }}
+                                {{ if and (eq . $featuredPhoto) (in $lifeImageExts $ext) }}
+                                    {{ $imagePath := printf "个人生活/%s" . }}
+                                    {{ $imageFile := printf "static/%s" $imagePath }}
+                                    {{ $imageConfig := imageConfig $imageFile }}
+                                    {{ $photoClass := "life-photo-landscape" }}
+                                    {{ if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 175) }}
+                                        {{ $photoClass = "life-photo-panorama" }}
+                                    {{ end }}
+                                    {{ $caption := replaceRE "\\.[^.]+$" "" . }}
+                                    <figure class="life-photo life-photo-featured {{ $photoClass }} reveal" data-orientation="landscape">
+                                        <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
+                                        <figcaption>{{ $caption }}</figcaption>
+                                    </figure>
+                                {{ end }}
                             {{ end }}
-                            {{ $caption := replaceRE "\\.[^.]+$" "" .Name }}
-                            <figure class="life-photo life-photo-featured {{ $photoClass }} reveal">
-                                <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
-                                <figcaption>{{ $caption }}</figcaption>
-                            </figure>
-                        {{ end }}
-                    {{ end }}
-                    {{ range $lifeFiles }}
-                        {{ $ext := lower (path.Ext .Name) }}
-                        {{ if and (ne .Name $featuredPhoto) (in (slice ".jpg" ".jpeg" ".png" ".webp" ".gif") $ext) }}
-                            {{ $imagePath := printf "个人生活/%s" .Name }}
-                            {{ $imageFile := printf "static/%s" $imagePath }}
-                            {{ $imageConfig := imageConfig $imageFile }}
-                            {{ $photoClass := "life-photo-square" }}
-                            {{ if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 175) }}
-                                {{ $photoClass = "life-photo-panorama" }}
-                            {{ else if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 118) }}
-                                {{ $photoClass = "life-photo-landscape" }}
-                            {{ else if gt (mul $imageConfig.Height 100) (mul $imageConfig.Width 118) }}
-                                {{ $photoClass = "life-photo-portrait" }}
+                            {{ range $landscapeFiles }}
+                                {{ $ext := lower (path.Ext .) }}
+                                {{ if and (ne . $featuredPhoto) (in $lifeImageExts $ext) }}
+                                    {{ $imagePath := printf "个人生活/%s" . }}
+                                    {{ $imageFile := printf "static/%s" $imagePath }}
+                                    {{ $imageConfig := imageConfig $imageFile }}
+                                    {{ $photoClass := "life-photo-landscape" }}
+                                    {{ if gt (mul $imageConfig.Width 100) (mul $imageConfig.Height 175) }}
+                                        {{ $photoClass = "life-photo-panorama" }}
+                                    {{ end }}
+                                    {{ $caption := replaceRE "\\.[^.]+$" "" . }}
+                                    <figure class="life-photo {{ $photoClass }} reveal" data-orientation="landscape">
+                                        <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
+                                        <figcaption>{{ $caption }}</figcaption>
+                                    </figure>
+                                {{ end }}
                             {{ end }}
-                            {{ $caption := replaceRE "\\.[^.]+$" "" .Name }}
-                            <figure class="life-photo {{ $photoClass }} reveal">
-                                <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
-                                <figcaption>{{ $caption }}</figcaption>
-                            </figure>
-                        {{ end }}
-                    {{ end }}
+                        </div>
+                    </div>
+
+                    <div class="life-panel">
+                        <div class="life-gallery life-gallery-portrait" aria-label="个人生活竖版照片">
+                            {{ range $portraitFiles }}
+                                {{ $ext := lower (path.Ext .) }}
+                                {{ if and (eq . $featuredPortraitPhoto) (in $lifeImageExts $ext) }}
+                                    {{ $imagePath := printf "个人生活/%s" . }}
+                                    {{ $caption := replaceRE "\\.[^.]+$" "" . }}
+                                    <figure class="life-photo life-photo-portrait reveal" data-orientation="portrait">
+                                        <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
+                                        <figcaption>{{ $caption }}</figcaption>
+                                    </figure>
+                                {{ end }}
+                            {{ end }}
+                            {{ range $portraitFiles }}
+                                {{ $ext := lower (path.Ext .) }}
+                                {{ if and (ne . $featuredPortraitPhoto) (in $lifeImageExts $ext) }}
+                                    {{ $imagePath := printf "个人生活/%s" . }}
+                                    {{ $caption := replaceRE "\\.[^.]+$" "" . }}
+                                    <figure class="life-photo life-photo-portrait reveal" data-orientation="portrait">
+                                        <img src="{{ $imagePath | relURL }}" alt="{{ $caption }}" loading="lazy" decoding="async">
+                                        <figcaption>{{ $caption }}</figcaption>
+                                    </figure>
+                                {{ end }}
+                            {{ end }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -248,7 +274,7 @@
                         <span class="pub-year">2026</span>
                         <div class="pub-content">
                             <h3>围绕电商平台的产业链：线上加强线下集聚的证据</h3>
-                            <p class="pub-authors">张莉、<strong>高涵</strong>*（通讯作者）、陈强远</p>
+                            <p class="pub-authors"><a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、<strong>高涵</strong>*（通讯作者）、<a class="collaborator-link" href="http://nads.ruc.edu.cn/yjtd/qzjs/js/33671670d25b49c3b18cca4e3f15d839.htm" target="_blank" rel="noopener noreferrer">陈强远</a></p>
                             <p class="pub-journal">《管理世界》待刊</p>
                             <p class="pub-language">中文发表</p>
                             <details class="pub-details">
@@ -262,7 +288,7 @@
                         <span class="pub-year">2025</span>
                         <div class="pub-content">
                             <h3>产业多样性与城市风险抵御能力</h3>
-                            <p class="pub-authors">李世刚、张梦悦、<strong>高涵</strong></p>
+                            <p class="pub-authors"><a class="collaborator-link" href="https://isbf.sysu.edu.cn/zh-hans/teacher/259" target="_blank" rel="noopener noreferrer">李世刚</a>、张梦悦、<strong>高涵</strong></p>
                             <p class="pub-journal">《财经问题研究》第2期</p>
                             <p class="pub-language">中文发表</p>
                             <details class="pub-details">
@@ -276,16 +302,20 @@
                         <span class="pub-year">2025</span>
                         <div class="pub-content">
                             <h3>关于优化城乡建设用地增减挂钩结余指标跨区域流转的建议</h3>
-                            <p class="pub-authors">张莉、黄伟、<strong>高涵</strong>、韩立彬</p>
+                            <p class="pub-authors"><a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、黄伟、<strong>高涵</strong>、<a class="collaborator-link" href="https://infr.dufe.edu.cn/content_48857.html" target="_blank" rel="noopener noreferrer">韩立彬</a></p>
                             <p class="pub-journal">《南方智库》决策参考第1期</p>
                             <p class="pub-language">中文发表</p>
+                            <details class="pub-details">
+                                <summary>摘要与关键词</summary>
+                                <p class="pub-abstract"><strong>摘要：</strong>习近平总书记在中央全面深化改革委员会第四次会议上强调，增强土地要素对优势地区高质量发展保障能力。城乡建设用地增减挂钩政策是通过跨区域的市场整合，突破用地指标约束，为优势地区高质量发展提供空间，同时实现土地增值收益跨区域溢价共享的重要举措，能够优化国土空间布局和促进区域协调发展。总体而言该政策在缓解土地要素空间错配、提高土地利用效率和推动乡村振兴等方面均取得了一定成效。但需注意，到目前，已有改革实践也暴露出一定问题，仍有改进空间。本文首先梳理和总结建设用地指标增减挂钩政策的整体改革进展和典型特征，进而具体地阐述和剖析政策实施过程中遇到的难点和阻力，最后在上述分析的基础上提出具有针对性和可操作性的政策优化建议。</p>
+                            </details>
                         </div>
                     </article>
                     <article class="pub-item reveal">
                         <span class="pub-year">2025</span>
                         <div class="pub-content">
                             <h3>土地市场降温、财政支出结构变动与地方公共服务水平</h3>
-                            <p class="pub-authors">张莉、童一舟、<strong>高涵</strong>*（通讯作者）</p>
+                            <p class="pub-authors"><a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、童一舟、<strong>高涵</strong>*（通讯作者）</p>
                             <p class="pub-journal">《财经问题研究》第11期</p>
                             <p class="pub-language">中文发表</p>
                             <details class="pub-details">
@@ -303,7 +333,7 @@
                         <span class="pub-year">终审</span>
                         <div class="pub-content">
                             <h3>税制改革与以地谋发展模式转型：供需分析和政策优化</h3>
-                            <p class="pub-authors">合作者：张莉，杨海生</p>
+                            <p class="pub-authors">合作者：<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/YangHaisheng" target="_blank" rel="noopener noreferrer">杨海生</a></p>
                             <p class="pub-journal">《统计研究》终审</p>
                             <details class="pub-details">
                                 <summary>摘要与关键词</summary>
@@ -316,14 +346,21 @@
                         <span class="pub-year">外审</span>
                         <div class="pub-content">
                             <h3>城市空间结构的微观基础：地块规模与本地消费活力</h3>
-                            <p class="pub-authors">合作者：张莉，吕谨伊</p>
+                            <p class="pub-authors">合作者：<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、吕谨伊</p>
+                        </div>
+                    </article>
+                    <article class="pub-item reveal">
+                        <span class="pub-year">进行中</span>
+                        <div class="pub-content">
+                            <h3>都市圈治理响应与县域市场可达性改善</h3>
+                            <p class="pub-authors">合作者：<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、吕谨伊</p>
                         </div>
                     </article>
                     <article class="pub-item reveal">
                         <span class="pub-year">已投稿</span>
                         <div class="pub-content">
                             <h3>大地块的财政激励：开源与节流的双重视角</h3>
-                            <p class="pub-authors">合作者：张莉，黎婉玉</p>
+                            <p class="pub-authors">合作者：<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、黎婉玉</p>
                         </div>
                     </article>
                     <article class="pub-item reveal">
@@ -341,14 +378,14 @@
                         <span class="pub-year">进行中</span>
                         <div class="pub-content">
                             <h3>高质量发展目标下的公共服务：路径选择与机制分析</h3>
-                            <p class="pub-authors">合作者：张莉，杨海生</p>
+                            <p class="pub-authors">合作者：<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">张莉</a>、<a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/YangHaisheng" target="_blank" rel="noopener noreferrer">杨海生</a></p>
                         </div>
                     </article>
                     <article class="pub-item reveal">
                         <span class="pub-year">进行中</span>
                         <div class="pub-content">
                             <h3>Keeping Up with the Peers: The Race to the Bottom in Local Land Subsidies</h3>
-                            <p class="pub-authors">Coauthored with: ZHANG Li, YANG Haisheng</p>
+                            <p class="pub-authors" data-no-translate>Coauthored with: <a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/ZhangLi" target="_blank" rel="noopener noreferrer">ZHANG Li</a>, <a class="collaborator-link" href="https://lingnan.sysu.edu.cn/faculty/YangHaisheng" target="_blank" rel="noopener noreferrer">YANG Haisheng</a></p>
                             <details class="pub-details">
                                 <summary>Abstract</summary>
                                 <p class="pub-abstract"><strong data-no-translate>Abstract: </strong>While there is a consensus that widespread competition exists among local governments within multi-layered large economies, the specific mechanisms of how this competition unfolds remain debated. Existing literature has predominantly focused on the instruments of competition rather than the process and its market implications. This paper investigates the behavioral logic and dynamic processes of local governments from a social interaction perspective, focusing on low-price subsidies for industrial land. Using tax survey data matched with micro-level industrial land transaction records, we explore the origins of the “race to the bottom” in land prices. We find that local government decisions regarding industrial land supply are not based solely on local factor endowments; rather, governments exhibit strong peer effects, mimicking and following the decisions of peer cities, often converging toward those offering the highest subsidies. Further analysis reveals that this behavioral response is more sensitive in key industries and high-tech sectors identified in planning documents, indicating significant industrial heterogeneity. Sub-sample analyses based on economic development levels and official turnover show that homogenous competition among local governments is complex, involving both imitative behavior and strategic adjustments driven by economic status and political cycles. Finally, we examine the economic consequences and find that this mimetic behavior distorts land supply without effectively enhancing firm productivity or promoting innovation.</p>
@@ -448,6 +485,20 @@
                     <h2 class="section-title">会议报告与学术活动</h2>
                 </div>
                 <div class="conferences-list">
+                    <article class="conference-item reveal">
+                        <span class="conf-year">2026</span>
+                        <div class="conf-content">
+                            <h4>The 4th Summer Meeting in Urban Economics</h4>
+                            <p>Wuhan University · Wuhan, China</p>
+                        </div>
+                    </article>
+                    <article class="conference-item reveal">
+                        <span class="conf-year">2026</span>
+                        <div class="conf-content">
+                            <h4>第六届中观经济学全国高校师资研讨会</h4>
+                            <p>上海交通大学</p>
+                        </div>
+                    </article>
                     <article class="conference-item reveal">
                         <span class="conf-year">2025</span>
                         <div class="conf-content">
@@ -549,7 +600,7 @@
     <footer>
         <div class="container footer-inner">
             <p>&copy; 2026 高涵. All rights reserved.</p>
-            <p class="footer-note">最后更新：2026 年 6 月</p>
+            <p class="footer-note">最后更新：2026 年 7 月</p>
         </div>
     </footer>
 

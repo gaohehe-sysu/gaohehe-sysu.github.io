@@ -388,15 +388,21 @@ strong {
 
 .about-content {
     display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
-    gap: 42px;
-    align-items: stretch;
+    grid-template-columns: minmax(0, 640px) minmax(300px, 340px);
+    justify-content: center;
+    gap: 56px;
+    align-items: start;
+}
+
+.about-text {
+    min-width: 0;
 }
 
 .about-text p {
     margin-bottom: 18px;
     color: var(--text-gray);
     font-size: 17px;
+    line-height: 1.86;
 }
 
 .interest-list {
@@ -437,21 +443,21 @@ strong {
 }
 
 .profile-card {
-    padding: 28px;
+    padding: 22px 24px;
 }
 
 .about-side {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
     gap: 18px;
-    align-self: stretch;
+    align-self: start;
     min-height: 0;
 }
 
 .about-portrait {
     display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    min-height: 0;
+    grid-template-rows: auto auto;
+    width: 100%;
     margin: 0;
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -463,6 +469,7 @@ strong {
 .about-portrait-image {
     position: relative;
     min-height: 0;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
 }
 
@@ -490,15 +497,15 @@ strong {
     font-family: var(--serif);
     font-size: 22px;
     color: var(--primary-color);
-    margin-bottom: 22px;
-    padding-bottom: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .edu-item {
     display: grid;
-    gap: 4px;
-    padding: 16px 0;
+    gap: 3px;
+    padding: 12px 0;
     border-bottom: 1px dashed var(--border-color);
 }
 
@@ -543,9 +550,18 @@ strong {
     margin-top: 8px;
 }
 
+.life-photo-layout {
+    display: grid;
+    gap: 34px;
+}
+
+.life-panel {
+    min-width: 0;
+}
+
 .life-gallery {
-    --life-row-height: clamp(184px, 18vw, 246px);
-    --life-column-width: clamp(204px, 17vw, 278px);
+    --life-row-height: clamp(210px, 20vw, 286px);
+    --life-column-width: clamp(212px, 17vw, 286px);
     display: grid;
     grid-auto-flow: column dense;
     grid-template-rows: repeat(2, var(--life-row-height));
@@ -559,6 +575,18 @@ strong {
     scroll-padding-inline: max(20px, calc((100vw - 1120px) / 2));
     padding: 6px 4px 22px;
     scrollbar-gutter: stable;
+}
+
+.life-gallery-landscape {
+    --life-row-height: clamp(220px, 19vw, 296px);
+    --life-column-width: clamp(218px, 16vw, 282px);
+}
+
+.life-gallery-portrait {
+    --life-row-height: clamp(330px, 31vw, 430px);
+    --life-column-width: clamp(186px, 15vw, 238px);
+    grid-template-rows: var(--life-row-height);
+    grid-auto-rows: var(--life-row-height);
 }
 
 .life-gallery.is-auto-scrolling {
@@ -597,13 +625,26 @@ strong {
     grid-row: span 2;
 }
 
+.life-gallery-landscape .life-photo-featured {
+    grid-column: span 3;
+}
+
 .life-photo-panorama,
 .life-photo-landscape {
     grid-column: span 2;
 }
 
+.life-photo-panorama {
+    grid-column: span 3;
+    grid-row: span 2;
+}
+
 .life-photo-portrait {
     grid-row: span 2;
+}
+
+.life-gallery-portrait .life-photo-portrait {
+    grid-row: span 1;
 }
 
 .life-photo:hover {
@@ -747,6 +788,26 @@ strong {
 .pub-keywords,
 .pub-language {
     font-size: 15px;
+}
+
+.collaborator-link {
+    color: var(--primary-color);
+    font-weight: 700;
+    text-decoration-line: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.collaborator-link:hover,
+.collaborator-link:focus-visible {
+    color: var(--accent-color);
+    text-decoration-color: var(--accent-color);
+}
+
+.collaborator-link:focus-visible {
+    outline: 2px solid rgba(179, 86, 66, 0.35);
+    outline-offset: 3px;
 }
 
 .pub-journal {
@@ -945,20 +1006,20 @@ html.js-enabled .reveal.visible {
 
     .about-content {
         grid-template-columns: 1fr;
+        justify-content: stretch;
         align-items: start;
     }
 
     .about-side {
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
         grid-template-rows: auto;
+        align-items: start;
         width: 100%;
     }
 
-    .about-portrait {
-        aspect-ratio: auto;
-    }
-
     .about-portrait-image {
-        aspect-ratio: 4 / 5;
+        min-height: 0;
+        aspect-ratio: 3 / 4;
     }
 }
 
@@ -1059,13 +1120,22 @@ html.js-enabled .reveal.visible {
         grid-template-columns: 1fr;
     }
 
+    .about-side {
+        grid-template-columns: 1fr;
+    }
+
+    .about-portrait {
+        width: min(100%, 340px);
+        justify-self: center;
+    }
+
     .research-card,
     .award-card {
         min-height: auto;
     }
 
     .life-gallery {
-        --life-row-height: clamp(164px, 38vw, 196px);
+        --life-row-height: clamp(184px, 44vw, 226px);
         --life-column-width: minmax(170px, 56vw);
         grid-template-rows: repeat(2, var(--life-row-height));
         grid-auto-rows: var(--life-row-height);
@@ -1073,9 +1143,37 @@ html.js-enabled .reveal.visible {
         padding-bottom: 18px;
     }
 
+    .life-photo-layout {
+        gap: 28px;
+    }
+
+    .life-gallery-landscape {
+        --life-row-height: clamp(188px, 46vw, 236px);
+        --life-column-width: minmax(172px, 56vw);
+    }
+
+    .life-gallery-portrait {
+        --life-row-height: clamp(320px, 86vw, 390px);
+        --life-column-width: minmax(184px, 54vw);
+        grid-template-rows: var(--life-row-height);
+        grid-auto-rows: var(--life-row-height);
+    }
+
+    .life-gallery-landscape .life-photo-featured {
+        grid-column: span 2;
+    }
+
     .life-photo-landscape,
     .life-photo-panorama {
         grid-column: span 2;
+    }
+
+    .life-photo-panorama {
+        grid-column: span 4;
+    }
+
+    .life-gallery-portrait .life-photo-portrait {
+        grid-row: span 1;
     }
 
     .life-photo img {

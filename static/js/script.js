@@ -82,6 +82,7 @@ function updateLifePhotoOrientation() {
         const applyOrientation = () => {
             const photo = image.closest('.life-photo');
             if (!photo || !image.naturalWidth || !image.naturalHeight) return;
+            if (photo.dataset.orientation) return;
 
             const ratio = image.naturalWidth / image.naturalHeight;
             photo.classList.remove(
@@ -111,115 +112,117 @@ function updateLifePhotoOrientation() {
 }
 
 function initLifeGalleryAutoScroll() {
-    const gallery = document.querySelector('.life-gallery');
-    if (!gallery) return;
+    const galleries = document.querySelectorAll('.life-gallery');
+    if (!galleries.length) return;
 
-    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let isVisible = false;
-    let isHoverPaused = false;
-    let isDragPaused = false;
-    let isFocusPaused = false;
-    let direction = 1;
-    let lastTimestamp = 0;
+    galleries.forEach((gallery) => {
+        const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let isVisible = false;
+        let isHoverPaused = false;
+        let isDragPaused = false;
+        let isFocusPaused = false;
+        let direction = 1;
+        let lastTimestamp = 0;
 
-    const canScroll = () => gallery.scrollWidth > gallery.clientWidth + 4;
-    const isPointerOverGallery = () => isHoverPaused || gallery.matches(':hover');
-    const shouldAutoScroll = () => (
-        isVisible
-        && !document.hidden
-        && !isPointerOverGallery()
-        && !isDragPaused
-        && !isFocusPaused
-        && !reducedMotionQuery.matches
-        && canScroll()
-    );
+        const canScroll = () => gallery.scrollWidth > gallery.clientWidth + 4;
+        const isPointerOverGallery = () => isHoverPaused || gallery.matches(':hover');
+        const shouldAutoScroll = () => (
+            isVisible
+            && !document.hidden
+            && !isPointerOverGallery()
+            && !isDragPaused
+            && !isFocusPaused
+            && !reducedMotionQuery.matches
+            && canScroll()
+        );
 
-    const syncAutoScrollState = () => {
-        gallery.classList.toggle('is-auto-scrolling', shouldAutoScroll());
-    };
+        const syncAutoScrollState = () => {
+            gallery.classList.toggle('is-auto-scrolling', shouldAutoScroll());
+        };
 
-    const animationStep = (timestamp) => {
-        if (!lastTimestamp) lastTimestamp = timestamp;
-        const elapsed = Math.min(timestamp - lastTimestamp, 80);
-        lastTimestamp = timestamp;
+        const animationStep = (timestamp) => {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const elapsed = Math.min(timestamp - lastTimestamp, 80);
+            lastTimestamp = timestamp;
 
-        if (shouldAutoScroll()) {
-            const maxScroll = gallery.scrollWidth - gallery.clientWidth;
-            const nextScroll = gallery.scrollLeft + direction * elapsed * 0.032;
+            if (shouldAutoScroll()) {
+                const maxScroll = gallery.scrollWidth - gallery.clientWidth;
+                const nextScroll = gallery.scrollLeft + direction * elapsed * 0.032;
 
-            if (nextScroll >= maxScroll) {
-                gallery.scrollLeft = maxScroll;
-                direction = -1;
-            } else if (nextScroll <= 0) {
-                gallery.scrollLeft = 0;
-                direction = 1;
-            } else {
-                gallery.scrollLeft = nextScroll;
+                if (nextScroll >= maxScroll) {
+                    gallery.scrollLeft = maxScroll;
+                    direction = -1;
+                } else if (nextScroll <= 0) {
+                    gallery.scrollLeft = 0;
+                    direction = 1;
+                } else {
+                    gallery.scrollLeft = nextScroll;
+                }
             }
-        }
 
-        syncAutoScrollState();
+            syncAutoScrollState();
+            window.requestAnimationFrame(animationStep);
+        };
+
+        const observer = new IntersectionObserver(([entry]) => {
+            isVisible = entry.isIntersecting;
+            lastTimestamp = 0;
+            syncAutoScrollState();
+        }, {
+            threshold: 0.14
+        });
+
+        observer.observe(gallery);
+
+        const pauseForHover = () => {
+            isHoverPaused = true;
+            syncAutoScrollState();
+        };
+
+        const resumeAfterHover = () => {
+            isHoverPaused = false;
+            syncAutoScrollState();
+        };
+
+        gallery.addEventListener('mouseenter', pauseForHover);
+        gallery.addEventListener('mouseleave', resumeAfterHover);
+        gallery.addEventListener('pointerenter', pauseForHover);
+        gallery.addEventListener('pointerleave', resumeAfterHover);
+
+        gallery.addEventListener('pointerdown', () => {
+            isDragPaused = true;
+            syncAutoScrollState();
+        });
+
+        window.addEventListener('pointerup', () => {
+            isDragPaused = false;
+            syncAutoScrollState();
+        });
+
+        gallery.addEventListener('focusin', () => {
+            isFocusPaused = true;
+            syncAutoScrollState();
+        });
+
+        gallery.addEventListener('focusout', () => {
+            isFocusPaused = false;
+            syncAutoScrollState();
+        });
+
+        window.addEventListener('resize', () => {
+            if (gallery.scrollLeft <= 1) direction = 1;
+            if (gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 1) direction = -1;
+            syncAutoScrollState();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            lastTimestamp = 0;
+            syncAutoScrollState();
+        });
+
+        reducedMotionQuery.addEventListener?.('change', syncAutoScrollState);
         window.requestAnimationFrame(animationStep);
-    };
-
-    const observer = new IntersectionObserver(([entry]) => {
-        isVisible = entry.isIntersecting;
-        lastTimestamp = 0;
-        syncAutoScrollState();
-    }, {
-        threshold: 0.14
     });
-
-    observer.observe(gallery);
-
-    const pauseForHover = () => {
-        isHoverPaused = true;
-        syncAutoScrollState();
-    };
-
-    const resumeAfterHover = () => {
-        isHoverPaused = false;
-        syncAutoScrollState();
-    };
-
-    gallery.addEventListener('mouseenter', pauseForHover);
-    gallery.addEventListener('mouseleave', resumeAfterHover);
-    gallery.addEventListener('pointerenter', pauseForHover);
-    gallery.addEventListener('pointerleave', resumeAfterHover);
-
-    gallery.addEventListener('pointerdown', () => {
-        isDragPaused = true;
-        syncAutoScrollState();
-    });
-
-    window.addEventListener('pointerup', () => {
-        isDragPaused = false;
-        syncAutoScrollState();
-    });
-
-    gallery.addEventListener('focusin', () => {
-        isFocusPaused = true;
-        syncAutoScrollState();
-    });
-
-    gallery.addEventListener('focusout', () => {
-        isFocusPaused = false;
-        syncAutoScrollState();
-    });
-
-    window.addEventListener('resize', () => {
-        if (gallery.scrollLeft <= 1) direction = 1;
-        if (gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 1) direction = -1;
-        syncAutoScrollState();
-    });
-
-    document.addEventListener('visibilitychange', () => {
-        lastTimestamp = 0;
-        syncAutoScrollState();
-    });
-
-    reducedMotionQuery.addEventListener?.('change', syncAutoScrollState);
-    window.requestAnimationFrame(animationStep);
 }
 
 updateLifePhotoOrientation();
@@ -238,12 +241,14 @@ const englishText = new Map(Object.entries({
     "土地配置、城市空间与公共服务": "Land allocation, urban space, and public services",
     "文本分析与 AI/LLM 研究方法": "Text analysis and AI/LLM methods",
     "关于我": "About Me",
-    "我现在是中山大学岭南学院科研博士后，研究方向为公共经济学与城市经济学。": "I am a postdoctoral researcher at Lingnan College, Sun Yat-sen University. My research fields are public finance and urban economics.",
-    "我本科就读于广东外语外贸大学创新班，这是由广外英文学院与经贸学院共同开设的双学位项目，并于 2020 年获得经济学与文学学位。2020-2022 年，我继续在广外经贸学院攻读硕士，于 2022 年获得国际商务硕士学位。2022-2026 年，我在中山大学国际金融学院攻读博士学位，研究兴趣包括财税改革与土地配置、城市经济中的产业集群等。": "I completed my undergraduate studies in the Innovation Class at Guangdong University of Foreign Studies, a dual-degree program jointly offered by the Faculty of English Language and Culture and the School of Economics and Trade. In 2020, I received degrees in economics and literature. From 2020 to 2022, I continued my graduate studies at the School of Economics and Trade, GDUFS, and received a master's degree in International Business in 2022. From 2022 to 2026, I pursued my doctoral studies at the International School of Business & Finance, Sun Yat-sen University. My research interests include fiscal and tax reform, land allocation, and industrial clusters in urban economics.",
-    "总的来说，我的研究兴趣始终围绕中国城市中的土地、财政与空间结构展开。博士阶段，我以“地块”为切入点构建了一个相对完整的研究框架，这也是我的学位论文。未来，我希望把这一框架向公共服务、本地消费、地方政府行为、跨区域协调等更广的议题延伸。": "Overall, my research interests have consistently centered on land, public finance, and spatial structure in Chinese cities. During my doctoral studies, I used land parcels as the entry point to build a relatively complete research framework, which also formed the basis of my dissertation. In the future, I hope to extend this framework to broader topics such as public services, local consumption, local government behavior, and cross-regional coordination.",
+    "Welcome！我是高涵，2026年7月我入职中山大学岭南学院担任科研博士后，研究方向为公共经济学与城市经济学。我的学术论文与决策参考发表或待刊于《管理世界》《财经问题研究》《南方智库》等，我获得中山大学2026届优秀毕业生、2025年第五届发展经济学全国大学生论文比赛二等奖。": "Welcome! I am Gao Han. In July 2026, I joined Lingnan College, Sun Yat-sen University as a postdoctoral researcher. My research fields are public finance and urban economics. My academic papers and policy references have been published or are forthcoming in Management World, Research on Financial and Economic Issues, Southern Think Tank, and other outlets. I received Outstanding Graduate, Class of 2026, Sun Yat-sen University, and Second Prize in the 5th National College Student Paper Competition in Development Economics in 2025.",
+    "我本科就读于广东外语外贸大学创新班，这是广外经贸学院与英文学院的双学位项目，我于2020年获得经济学学士和文学学士学位。本科毕业后，我继续在广外攻读硕士，导师是": "I completed my undergraduate studies in the Innovation Class at Guangdong University of Foreign Studies, a dual-degree program offered by the School of Economics and Trade and the Faculty of English Language and Culture, and received bachelor's degrees in economics and literature in 2020. After graduation, I continued my master's studies at GDUFS under the supervision of Professor ",
+    "安苑": "An Yuan",
+    "教授。2022-2026 年，我在中山大学国际金融学院攻读博士学位，导师是": ". From 2022 to 2026, I pursued my doctoral studies at the International School of Business & Finance, Sun Yat-sen University, supervised by Professor ",
+    "教授，我于2026年6月获得经济学博士学位。我的研究兴趣包括财税改革与土地配置、城市空间结构与产业集群等。当前，我正在探索 AI-Agent 及其在经济学中的应用，并与自己以往的研究相结合。": ". I received my Ph.D. in Economics in June 2026. My research interests include fiscal and tax reform and land allocation, urban spatial structure, and industrial clusters. I am currently exploring AI agents and their applications in economics, connecting them with my previous research.",
     "更长远地看，我把自己的研究定位在“空间中的公共经济学”这个交汇点：把传统公共经济学关心的财政、再分配、公共品供给问题，放到空间维度下重新审视。": "In the longer run, I position my research at the intersection of public economics in space: rethinking fiscal policy, redistribution, and public-goods provision through a spatial lens.",
     "“大潮起珠江”。作为改革开放的前沿，珠三角这片土地有很多鲜活精彩、值得深入思考的现实经济问题。我希望在这里多观察、多调研，做出更多真正的研究。": "\"The great tide rises from the Pearl River.\" As a frontier of China's reform and opening-up, the Pearl River Delta offers many vivid and thought-provoking real-world economic questions. I hope to observe more, conduct more fieldwork, and produce research that is genuinely grounded in reality.",
-    "我来自湖北荆州，江河湖泊环绕的平原小镇。学习与工作之余，我喜欢逛展、拍照、打羽毛球、看电影和阅读，也会在小红书分享对学术科研的思考与感悟。": "I am from Jingzhou, Hubei, a small plain town surrounded by rivers and lakes. Outside research, I enjoy visiting exhibitions, photography, badminton, films, and reading. I also share reflections on academic research on Xiaohongshu.",
+    "我来自湖北荆州，江河湖泊环绕的平原小镇。学习与工作之余，我喜欢逛展、拍照、打羽毛球、看电影、阅读、看演唱会和音乐节，也喜欢弹吉他，还会在小红书分享对学术科研的思考与感悟。": "I am from Jingzhou, Hubei, a small plain town surrounded by rivers and lakes. Outside research, I enjoy visiting exhibitions, photography, badminton, films, reading, concerts and music festivals, and playing guitar. I also share reflections on academic research on Xiaohongshu.",
     "公共经济学：财税体制改革、地方政府行为与公共品供给": "Public Economics: fiscal and tax reform, local government behavior, and public-goods provision",
     "城市经济学：土地配置、产业集群、本地消费与空间结构": "Urban Economics: land allocation, industrial clusters, local consumption, and spatial structure",
     "空间中的公共经济学：财政、再分配与公共服务的空间维度": "Public Economics in Space: spatial dimensions of fiscal policy, redistribution, and public services",
@@ -254,9 +259,13 @@ const englishText = new Map(Object.entries({
     "国际商务硕士": "M.A. in International Business",
     "广东外语外贸大学经贸学院 · 国际商务": "School of Economics and Trade, Guangdong University of Foreign Studies · International Business",
     "经济学与文学双学位": "Dual Degree in Economics and Literature",
-    "广东外语外贸大学创新班 · 英文学院与经贸学院联合项目": "GDUFS Innovation Class · Joint Program of the Faculty of English Language and Culture and the School of Economics and Trade",
+    "广东外语外贸大学创新班": "GDUFS Innovation Class",
     "个人生活": "Personal Life",
     "一些旅行、演出、校园与家乡的片段。": "Moments from travel, live music, campus, and home.",
+    "陈奕迅有一首歌叫《沙龙》，唱的是摄影与拍照的意义。他在歌里唱到“每张都罕有”。我也喜欢用照片记录生命的密度，坦白留下当时的感情、态度与转瞬即逝的片段。": "Eason Chan has a song called Salon, about photography and the meaning of taking pictures. One line says that every photo is rare. I also like using photographs to record the density of life, honestly preserving the feelings, attitudes, and fleeting fragments of a moment.",
+    "横版照片": "Landscape Photos",
+    "竖版照片": "Portrait Photos",
+    "张": "photos",
     "研究领域": "Research Areas",
     "关注财税体制改革、财政压力与地方政府在土地市场中的行为选择。": "I study fiscal reform, fiscal pressure, and local governments' behavioral choices in land markets.",
     "研究城市土地配置、土地利用、公共服务供给与空间结构对经济活动的影响。": "I examine how urban land allocation, land use, public-service provision, and spatial structure affect economic activity.",
@@ -264,7 +273,18 @@ const englishText = new Map(Object.entries({
     "探索生成式 AI 与大语言模型在政策文本、新闻公告等非结构化数据中的应用。": "I explore applications of generative AI and large language models to unstructured data, including policy texts and news announcements.",
     "学术论文": "Publications",
     "已发表论文": "Published Papers",
+    "，": ", ",
+    "、": ", ",
+    "合作者：": "Coauthored with: ",
+    "张莉": "Zhang Li",
+    "杨海生": "Yang Haisheng",
+    "陈强远": "Chen Qiangyuan",
+    "韩立彬": "Han Libin",
+    "李世刚": "Li Shigang",
+    "吕谨伊": "Lü Jinyi",
+    "黎婉玉": "Li Wanyu",
     "张莉、": "Zhang Li, ",
+    "*（通讯作者）、": "* (corresponding author), ",
     "*（通讯作者）、陈强远": "* (corresponding author), Chen Qiangyuan",
     "*（通讯作者）": "* (corresponding author)",
     "《管理世界》待刊": "Forthcoming in Management World",
@@ -275,11 +295,16 @@ const englishText = new Map(Object.entries({
     "关键词：": "Keywords: ",
     "独角兽企业；SHEIN；集聚效应；跨境电商平台；链主企业": "unicorn firms; SHEIN; agglomeration effects; cross-border e-commerce platforms; platform leaders",
     "李世刚、张梦悦、": "Li Shigang, Zhang Mengyue, ",
+    "、张梦悦、": ", Zhang Mengyue, ",
     "《财经问题研究》第2期": "Research on Financial and Economic Issues, no. 2",
+    "关于优化城乡建设用地增减挂钩结余指标跨区域流转的建议": "Recommendations for Optimizing Interregional Transfers of Surplus Quotas under the Linking Policy for Increases and Decreases in Urban and Rural Construction Land",
     "张莉、黄伟、": "Zhang Li, Huang Wei, ",
+    "、黄伟、": ", Huang Wei, ",
     "、韩立彬": ", Han Libin",
     "《南方智库》决策参考第1期": "Southern Think Tank: Policy Reference, no. 1",
+    "习近平总书记在中央全面深化改革委员会第四次会议上强调，增强土地要素对优势地区高质量发展保障能力。城乡建设用地增减挂钩政策是通过跨区域的市场整合，突破用地指标约束，为优势地区高质量发展提供空间，同时实现土地增值收益跨区域溢价共享的重要举措，能够优化国土空间布局和促进区域协调发展。总体而言该政策在缓解土地要素空间错配、提高土地利用效率和推动乡村振兴等方面均取得了一定成效。但需注意，到目前，已有改革实践也暴露出一定问题，仍有改进空间。本文首先梳理和总结建设用地指标增减挂钩政策的整体改革进展和典型特征，进而具体地阐述和剖析政策实施过程中遇到的难点和阻力，最后在上述分析的基础上提出具有针对性和可操作性的政策优化建议。": "At the fourth meeting of the Central Commission for Comprehensively Deepening Reform, General Secretary Xi Jinping emphasized strengthening the capacity of land factors to support high-quality development in advantaged regions. The policy linking increases and decreases in urban and rural construction land is an important measure that uses cross-regional market integration to break through land-quota constraints, provide space for high-quality development in advantaged regions, and share cross-regional premium gains from land appreciation. It can optimize the layout of territorial space and promote coordinated regional development. Overall, the policy has achieved results in easing the spatial misallocation of land factors, improving land-use efficiency, and advancing rural revitalization. However, existing reform practices have also revealed problems and room for improvement. This article first reviews and summarizes the overall reform progress and typical features of the policy, then analyzes the difficulties and obstacles encountered during implementation, and finally proposes targeted and operational policy recommendations based on that analysis.",
     "张莉、童一舟、": "Zhang Li, Tong Yizhou, ",
+    "、童一舟、": ", Tong Yizhou, ",
     "《财经问题研究》第11期": "Research on Financial and Economic Issues, no. 11",
     "工作论文与进展中研究": "Working Papers & Research in Progress",
     "终审": "Final Review",
@@ -289,12 +314,15 @@ const englishText = new Map(Object.entries({
     "内容提要：": "Summary: ",
     "当前，新一轮财税体制改革意义重大，重塑地方政府的以地谋发展行为和激发市场主体的高质量发展迫在眉睫。“营改增”是我国财税体制现代化的重大改革，本文以“营改增”政策为准自然实验，基于土地市场网 2010 年至 2016 年的微观土地出让信息和匹配了地块的税收调查数据，实证检验了此改革如何影响产业用地市场的供需双方，以及基于机器学习方法提出政策优化具体方向。结果表明，相比其他城市，试点城市在政策推行后工业用地的出让面积显著减少了 10%，交易规模下降 7%，实际单价上升 5%，且效应在建设用地指标约束较强的城市中更为突出，在与服务业关联更紧密的行业以及质量较好的高等级地块更为明显。进一步地，采用因果路径分析考察了“财政激励效应”和“需求冲击效应”及二者的相对重要性，发现“营改增”使得制造业实际增值税率下降，这对政府而言是负向的财政激励，进而减少了出让工业用地培育增值税税源的动机；而在需求侧，这一税制改革使得制造业企业资源配置更合理，放缓了粗放式购置土地扩张厂房的动机，因此最终工业用地交易规模减少。最后，基于市场均衡处理效应框架的分析表明，工业用地的市场化交易与集约节约利用仍是未来改革的重点。本文的研究结论能为后续深化财税体制现代化改革以及城市土地配置发展目标提供优化方向。": "A new round of fiscal and tax reform is consequential for reshaping local governments' land-driven development strategies and promoting high-quality development. This paper treats the replacement of business tax with value-added tax (VAT) as a quasi-natural experiment. Using microdata on land transactions from 2010 to 2016 matched to tax-survey data, we empirically assess how the reform affected both supply and demand in industrial land markets and use machine-learning methods to identify directions for policy optimization. Relative to other cities, pilot cities experienced a 10% decrease in industrial land supplied, a 7% decline in transaction volume, and a 5% increase in real unit prices after implementation. These effects are more pronounced where construction-land quotas are tighter, in industries more closely related to services, and on higher-quality parcels. Causal-path analysis shows that the reform reduced manufacturers' effective VAT rates. For local governments, this weakened the fiscal incentive to supply industrial land to cultivate VAT revenue; on the demand side, it improved firms' resource allocation and reduced incentives for extensive land purchases and plant expansion. Consequently, industrial land transactions declined. A market-equilibrium treatment-effect framework further indicates that market-based transactions and intensive, economical land use remain priorities for future reform. These results inform the continued modernization of China's fiscal system and policy objectives for urban land allocation.",
     "税制改革；营改增；工业用地；因果路径分析；市场均衡下的处理效应": "tax reform; VAT reform; industrial land; causal-path analysis; treatment effects under market equilibrium",
-    "外审": "External Review",
+    "外审": "Under Review",
     "城市空间结构的微观基础：地块规模与本地消费活力": "The Microfoundations of Urban Spatial Structure: Parcel Size and Local Consumption Vitality",
     "合作者：张莉，吕谨伊": "Coauthored with Zhang Li and Lü Jinyi",
+    "、吕谨伊": ", Lü Jinyi",
+    "都市圈治理响应与县域市场可达性改善": "Metropolitan Governance Responses and Improvements in County-Level Market Accessibility",
     "已投稿": "Submitted",
     "大地块的财政激励：开源与节流的双重视角": "Fiscal Incentives for Large Parcels: A Dual Perspective on Revenue Generation and Expenditure Control",
     "合作者：张莉，黎婉玉": "Coauthored with Zhang Li and Li Wanyu",
+    "、黎婉玉": ", Li Wanyu",
     "进行中": "Ongoing",
     "地理距离作为处理变量的因果推断：理论基础、方法前沿与实践规范": "Causal Inference with Geographic Distance as a Treatment Variable: Theory, Methodological Frontiers, and Practical Standards",
     "随着地理编码（geocoded）微观数据的普及，以“到某一地点的地理距离”界定处理状态、考察其对邻近单元影响的研究设计，在经济学经验研究中日益普遍，广泛应用于污染、交通、城市更新、产业集群与企业区位等议题。然而，如何依据距离合理界定处理组与控制组、距离效应的理论基础何在，相关方法仍缺乏系统梳理。本文以潜在结果框架与“基于设计”（design-based）的研究范式为统一基础，澄清“空间处理”的概念内涵与识别假设，系统梳理距离缓冲区、环形法、距离梯度、空间双重差分、邻里固定效应与处理分配建模等主流方法，并结合蒙特卡洛模拟与图示介绍非参数处理效应曲线估计、反事实候选地点的机器学习构造、基于设计的标准误等前沿进展。在此基础上，本文给出一套可操作的“标准化操作流程”与“可行性检验”清单，回顾权威中英文期刊的应用实践，剖析处理环与控制环设定任意、控制组溢出污染与不可比、对照组构造不当、空间相关推断失当等常见误区，并提出相应的解决方案，以期为相关经验研究提供方法论参考。": "As geocoded microdata become increasingly available, empirical economics has made growing use of research designs that define treatment by geographic distance to a location and assess effects on nearby units. Such designs are applied to pollution, transportation, urban renewal, industrial clusters, and firm location. Yet the theoretical basis for distance effects and principled choices of treatment and control groups remain insufficiently systematized. This paper uses the potential-outcomes framework and a design-based research paradigm to clarify the concept of spatial treatment and its identification assumptions. It reviews major approaches, including distance buffers, ring methods, distance gradients, spatial difference-in-differences, neighborhood fixed effects, and treatment-assignment modeling. Monte Carlo simulations and illustrations introduce frontier developments such as nonparametric treatment-effect curves, machine-learning construction of counterfactual candidate locations, and design-based standard errors. The paper then presents an operational standard workflow and feasibility checklist, reviews applications in leading Chinese and international journals, and addresses common pitfalls: arbitrary treatment and control rings, spillover contamination and lack of comparability in control groups, inappropriate comparison-group construction, and invalid spatially correlated inference.",
@@ -328,6 +356,10 @@ const englishText = new Map(Object.entries({
     "国际商务案例分析大赛校级二等奖": "Second Prize, University International Business Case Analysis Competition",
     "2021 年 7 月 · 一等奖空缺": "Jul. 2021 · No first prize awarded",
     "会议报告与学术活动": "Conference Presentations & Academic Activities",
+    "The 4th Summer Meeting in Urban Economics": "The 4th Summer Meeting in Urban Economics",
+    "Wuhan University · Wuhan, China": "Wuhan University · Wuhan, China",
+    "第六届中观经济学全国高校师资研讨会": "6th National Faculty Workshop on Meso-Economics",
+    "上海交通大学": "Shanghai Jiao Tong University",
     "第十一届中国财政学论坛": "11th China Public Finance Forum",
     "中南财经政法大学 · 湖北武汉": "Zhongnan University of Economics and Law · Wuhan, Hubei",
     "第十届财政学博士生创新论坛": "10th Doctoral Innovation Forum in Public Finance",
@@ -352,7 +384,7 @@ const englishText = new Map(Object.entries({
     "广东省广州市海珠区中山大学南校园善衡堂 S211": "Room S211, Shanheng Hall, South Campus, Sun Yat-sen University, Haizhu District, Guangzhou, Guangdong, China",
     "小红书": "Xiaohongshu (RED)",
     "© 2026 高涵. All rights reserved.": "© 2026 Gao Han. All rights reserved.",
-    "最后更新：2026 年 6 月": "Last updated: June 2026"
+    "最后更新：2026 年 7 月": "Last updated: July 2026"
 }).map(([chinese, english]) => [chinese.trim(), english]));
 
 const chineseText = new Map([...englishText].map(([chinese, english]) => [english.trim(), chinese]));
